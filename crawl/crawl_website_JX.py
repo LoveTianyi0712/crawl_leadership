@@ -5,7 +5,7 @@
 
 import requests
 import re
-from get_data import get_leadership, retrieve_leadership
+from utils.get_data import get_leadership, retrieve_leadership
 from bs4 import BeautifulSoup
 from datetime import datetime
 
