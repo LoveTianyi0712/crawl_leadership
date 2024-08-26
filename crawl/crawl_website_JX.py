@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2024/8/23 9:25
 # @Author  : Gan Liyifan
-# @File    : crawl_website.py
+# @File    : crawl.py
 
 import requests
 import re
@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 
-def crawl_website(period):
+def crawl_website_JX(period):
     url = "https://sousuo.jiangxi.gov.cn/jsearchfront/interfaces/cateSearch.do"
 
     data = {
