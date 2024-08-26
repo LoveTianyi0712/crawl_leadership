@@ -7,7 +7,7 @@ import requests
 import re
 import datetime
 from bs4 import BeautifulSoup
-from Leadership import Leadership
+from data.Leadership import Leadership
 
 
 def get_leadership(url):

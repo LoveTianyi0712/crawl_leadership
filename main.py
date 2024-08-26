@@ -5,3 +5,4 @@ if __name__ == '__main__':
     period = 7
     leadership_list = crawl_website_JX(period)
     insert_leadership(leadership_list)
+    print("Success!")
