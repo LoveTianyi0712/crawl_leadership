@@ -7,9 +7,10 @@ import requests
 import re
 from get_data import get_leadership, retrieve_leadership
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 
-def crawl_website():
+def crawl_website(period):
     url = "https://sousuo.jiangxi.gov.cn/jsearchfront/interfaces/cateSearch.do"
 
     data = {
@@ -61,13 +62,16 @@ def crawl_website():
             url_pattern = r'http[s]?://[^ ]+'
             url_match = re.search(url_pattern, links[1].text)
             clean_url = url_match.group(0).strip()
-            paragraphs = get_leadership(clean_url)
+            paragraphs, pub_date = get_leadership(clean_url)
 
             if paragraphs == -1:
                 raise (ConnectionError("Failed to get data at", clean_url))
 
-            leaderships = retrieve_leadership(paragraphs)
-            leadership_list.extend(leaderships)
+            current_date = datetime.now().date()
+            time_diff = current_date - pub_date
+            if period > time_diff.days:
+                leaderships = retrieve_leadership(paragraphs)
+                leadership_list.extend(leaderships)
 
         return leadership_list
     else:

@@ -21,14 +21,24 @@ def get_leadership(url):
     if response.status_code == 200:
         response.encoding = "utf-8"
         soup = BeautifulSoup(response.text, 'html.parser')
+
         p_labels = soup.find_all('p')
+        pub_date_tag = soup.find('meta', {'name': 'pubdate'})
 
         # Convert all the labels into paragraphs
         paragraphs = []
         for label in p_labels:
             paragraphs.append(label.text)
 
-        return paragraphs
+        # Convert the publication date into tags
+        if pub_date_tag:
+            pub_date_str = pub_date_tag.get('content')
+            time_obj = datetime.datetime.strptime(pub_date_str, "%Y-%m-%d %H:%M")
+            pub_date = time_obj.date()
+        else:
+            raise (ValueError("Publication date not found. Please check the website manually"))
+
+        return paragraphs, pub_date
     else:
         return -1
 
