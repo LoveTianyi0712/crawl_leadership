@@ -10,6 +10,26 @@ from bs4 import BeautifulSoup
 from data.Leadership import Leadership
 
 
+def get_content(url):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+    }
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        response.encoding = "utf-8"
+        soup = BeautifulSoup(response.text, 'html.parser')
+        p_labels = soup.find_all('p')
+        paragraphs = ""
+        for p in p_labels:
+            paragraphs += p.text
+    else:
+        raise (ConnectionError("Fail to response, status code: ", response.status_code))
+
+    return paragraphs
+
+
 def get_leadership(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -59,7 +79,7 @@ def convert_leadership(info_list):
     l_gender = info_list[1]
     l_race = info_list[2]
 
-    pattern = r'(\d{4})年(0?[1-9]|1[0-2])月(.+)'
+    pattern = r'(\d{4})年(0?[1-9]|1[0-2])月(.*)?'
     match = re.match(pattern, info_list[3])
 
     if match:
@@ -67,7 +87,7 @@ def convert_leadership(info_list):
         month = int(match.group(2))
         formatted_date = datetime.date(year, month, 1).strftime('%Y-%m')
     else:
-        raise (ValueError("Invalid date time format while processing the birthdate:", info_list[3]))
+        formatted_date = ""
 
     l_birthdate = formatted_date
 
