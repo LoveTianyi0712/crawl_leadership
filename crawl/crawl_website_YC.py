@@ -2,9 +2,13 @@
 # @Time    : 2024/8/28 12:07
 # @Author  : Gan Liyifan
 # @File    : crawl_website_YC.py
+import time
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
 
+from utils.ai_processing import ai_processing_simple
 from utils.get_data import get_content
 
 def crawl_website_YC(period):
@@ -19,15 +23,22 @@ def crawl_website_YC(period):
         response.encoding = "utf-8"
         soup = BeautifulSoup(response.text, 'html.parser')
         li_tags = soup.find_all('li')
+        leadership_list = []
         for li in li_tags:
             if li.find('a') and 'target' in li.find('a').attrs and 'title' in li.find('a').attrs:
                 link = 'http://www.yichun.gov.cn' + li.find('a')['href']
-                pub_time = li.find('span', class_='time').text
-                print(link, pub_time)
+                pub_date_str = li.find('span', class_='time').text.strip()
+                time_obj = datetime.strptime(pub_date_str, "%Y-%m-%d")
+                pub_date = time_obj.date()
+                current_date = datetime.now().date()
+                time_diff = current_date - pub_date
+                if period > time_diff.days:
+                    paragraphs = get_content(link)
+                    leaderships = ai_processing_simple(paragraphs)
+                    time.sleep(20)
+                    leadership_list.extend(leaderships)
+
+        return leadership_list
 
     else:
         raise (ConnectionError("Fail to response, status code: ", response.status_code))
-
-url = "http://www.yichun.gov.cn/ycsrmzf/rsrm/202405/6c6e706cf5d44db0840bcbb9051eaafb.shtml"
-paragraph = get_content(url)
-print(paragraph)

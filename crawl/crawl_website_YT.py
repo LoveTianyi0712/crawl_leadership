@@ -2,9 +2,13 @@
 # @Time    : 2024/8/28 13:53
 # @Author  : Gan Liyifan
 # @File    : crawl_website_YT.py
+import time
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
 
+from utils.ai_processing import ai_processing_simple
 from utils.get_data import get_content
 
 def crawl_website_YT(period):
@@ -20,14 +24,27 @@ def crawl_website_YT(period):
         response.encoding = "utf-8"
         soup = BeautifulSoup(response.text, 'html.parser')
         li_tags = soup.find_all('li')
+        leadership_list = []
         for li in li_tags:
             link = li.find('a')['href']
-            pub_time = li.find('b').text
-            print(link, pub_time)
+            print(link)
+            pub_date_str = li.find('b').text
+            time_obj = datetime.strptime(pub_date_str, "%Y-%m-%d")
+            pub_date = time_obj.date()
+            current_date = datetime.now().date()
+            time_diff = current_date - pub_date
+            if period > time_diff.days:
+                paragraphs = get_content(link)
+                leaderships = ai_processing_simple(paragraphs)
+                time.sleep(20)
+                leadership_list.extend(leaderships)
+
+        return leadership_list
 
     else:
         raise (ConnectionError("Fail to response, status code: ", response.status_code))
 
-url = "http://www.yingtan.gov.cn/art/2024/8/26/art_12609_1422498.html?xxgkhide=1"
-paragraphs = get_content(url)
-print(paragraphs)
+
+leadership_list = crawl_website_YT(7) ## TODO
+for leadership in leadership_list:
+    print(leadership.to_dict())

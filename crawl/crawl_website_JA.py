@@ -2,9 +2,12 @@
 # @Time    : 2024/8/28 9:12
 # @Author  : Gan Liyifan
 # @File    : crawl_website_JA.py
-import requests
-from bs4 import BeautifulSoup
+import time
+from datetime import datetime
 
+import requests
+
+from utils.ai_processing import ai_processing_simple
 from utils.get_data import get_content
 
 
@@ -53,18 +56,28 @@ def crawl_website_JA(period):
     }
 
     response = requests.post(url, headers=headers, data=data)
+    leadership_list = []
     if response.status_code == 200:
         json_data = response.json()
         items = json_data["data"]
         for item in items:
             link = item["url"]
-            update_time = item["updatetime"]
-            print(link, update_time)
+            pub_date_str = item["updatetime"]
+            time_obj = datetime.strptime(pub_date_str, "%Y-%m-%d")
+            pub_date = time_obj.date()
+            current_date = datetime.now().date()
+            time_diff = current_date - pub_date
+            if period > time_diff.days:
+                print(link)
+                paragraphs = get_content(link)
+                leaderships = ai_processing_simple(paragraphs)
+                time.sleep(20)
+                leadership_list.extend(leaderships)
+
+        return leadership_list
 
     else:
         raise (ConnectionError("Fail to response, status code: ", response.status_code))
 
-
-url = "http://www.jian.gov.cn/xxgk-show-10224468.html"
-paragraphs = get_content(url)
-print(paragraphs)
+crawl_website_JA(30) ## TODO
+## Pdf problem

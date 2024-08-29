@@ -2,6 +2,8 @@
 # @Time    : 2024/8/27 8:46
 # @Author  : Gan Liyifan
 # @File    : crawl_website_JJ.py
+import time
+
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -38,6 +40,7 @@ def crawl_website_JJ(period):
                 if period > time_diff.days:
                     paragraphs = get_content(link)
                     leaderships = ai_processing(paragraphs)
+                    time.sleep(20)
                     leadership_list.extend(leaderships)
 
         return leadership_list

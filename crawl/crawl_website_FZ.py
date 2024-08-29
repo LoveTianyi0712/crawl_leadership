@@ -3,9 +3,13 @@
 # @Author  : Gan Liyifan
 # @File    : crawl_website_FZ.py
 import re
+import time
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
 
+from utils.ai_processing import ai_processing_simple
 from utils.get_data import get_content
 
 
@@ -21,6 +25,7 @@ def crawl_website_FZ(period):
         response.encoding = "utf-8"
         soup = BeautifulSoup(response.text, 'html.parser')
         scripts = soup.find_all('script', type='text/xml')
+        leadership_list = []
 
         for script in scripts:
             cdata_content = script.string
@@ -29,12 +34,17 @@ def crawl_website_FZ(period):
         for li in matches:
             li_soup = BeautifulSoup(li, 'html.parser')
             link = "https://www.jxfz.gov.cn/" + li_soup.find('a')['href']
-            date = li_soup.find('b').text.strip()
-            print(link, date)
+            pub_date_str = li_soup.find('b').text.strip()
+            time_obj = datetime.strptime(pub_date_str, "%Y-%m-%d")
+            pub_date = time_obj.date()
+            current_date = datetime.now().date()
+            time_diff = current_date - pub_date
+            if period > time_diff.days:
+                paragraphs = get_content(link)
+                leaderships = ai_processing_simple(paragraphs)
+                time.sleep(20)
+                leadership_list.extend(leaderships)
 
+        return leadership_list
     else:
         raise (ConnectionError("Fail to response, status code: ", response.status_code))
-
-url = "https://www.jxfz.gov.cn//art/2024/7/26/art_24619_4201962.html"
-paragraphs = get_content(url)
-print(paragraphs)
