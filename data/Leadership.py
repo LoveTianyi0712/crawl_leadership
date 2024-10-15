@@ -19,7 +19,7 @@ class Leadership:
         self.create_by = '系统定时任务'
         self.create_time = datetime.now()
         self.update_by = ''
-        self.update_time = ''
+        self.update_time = None
         self.remark = ''
         self.url = ''
         self.original_json = ''

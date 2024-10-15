@@ -22,7 +22,7 @@ def insert_leadership(leadership_list):
 
     # Create table
     cur.execute('''
-            CREATE TABLE `info_leader_appoint` (
+            CREATE TABLE IF NOT EXISTS `info_leader_appoint` (
                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
                 `name` varchar(128) DEFAULT '' COMMENT '名字',
                 `gender` varchar(30) DEFAULT '' COMMENT '性别',
