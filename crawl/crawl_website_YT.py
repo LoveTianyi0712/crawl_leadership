@@ -44,7 +44,7 @@ def crawl_website_YT(period):
     else:
         raise (ConnectionError("Fail to response, status code: ", response.status_code))
 
-
-leadership_list = crawl_website_YT(7) ## TODO
-for leadership in leadership_list:
-    print(leadership.to_dict())
+if __name__ == "__main__":
+    leadership_list = crawl_website_YT(7) ## TODO
+    for leadership in leadership_list:
+        print(leadership.to_dict())

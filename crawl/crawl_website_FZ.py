@@ -9,6 +9,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+from Config import Config
 from utils.ai_processing import ai_processing_simple
 from utils.get_data import get_content, leadership_process
 
@@ -43,7 +44,7 @@ def crawl_website_FZ(period):
                 paragraphs, url_response = get_content(link)
                 leaderships = ai_processing_simple(paragraphs)
                 leaderships = leadership_process(leaderships, link, url_response)
-                time.sleep(20)
+                time.sleep(Config.TIME_INTERVAL)
                 leadership_list.extend(leaderships)
 
         return leadership_list

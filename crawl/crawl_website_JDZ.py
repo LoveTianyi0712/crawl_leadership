@@ -31,4 +31,5 @@ def crawl_website_JDZ(period):
     else:
         raise (ConnectionError("Fail to response, status code: ", response.status_code))
 
-crawl_website_JDZ(7) ## TODO
+if __name__ == '__main__':
+    crawl_website_JDZ(7) ## TODO
