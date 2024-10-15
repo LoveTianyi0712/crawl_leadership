@@ -8,7 +8,7 @@ from datetime import datetime
 import requests
 
 from utils.ai_processing import ai_processing_simple
-from utils.get_data import get_content
+from utils.get_data import get_content, leadership_process
 
 
 def crawl_website_JA(period):
@@ -68,9 +68,9 @@ def crawl_website_JA(period):
             current_date = datetime.now().date()
             time_diff = current_date - pub_date
             if period > time_diff.days:
-                print(link)
-                paragraphs = get_content(link)
+                paragraphs, url_response = get_content(link)
                 leaderships = ai_processing_simple(paragraphs)
+                leaderships = leadership_process(leaderships, link, url_response)
                 time.sleep(20)
                 leadership_list.extend(leaderships)
 

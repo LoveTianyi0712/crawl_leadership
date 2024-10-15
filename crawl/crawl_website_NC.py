@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 from utils.ai_processing import ai_processing, ai_processing_simple
-from utils.get_data import get_content
+from utils.get_data import get_content, leadership_process
 
 
 def crawl_website_NC(period):
@@ -35,8 +35,9 @@ def crawl_website_NC(period):
                 current_date = datetime.now().date()
                 time_diff = current_date - pub_date
                 if period > time_diff.days:
-                    paragraphs = get_content(link)
+                    paragraphs, url_response = get_content(link)
                     leaderships = ai_processing_simple(paragraphs)
+                    leaderships = leadership_process(leaderships, link, url_response)
                     time.sleep(20)
                     leadership_list.extend(leaderships)
 

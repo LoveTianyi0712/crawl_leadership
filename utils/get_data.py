@@ -27,7 +27,7 @@ def get_content(url):
     else:
         raise (ConnectionError("Fail to response, status code: ", response.status_code))
 
-    return paragraphs
+    return paragraphs, response.text
 
 
 def get_leadership(url):
@@ -58,7 +58,7 @@ def get_leadership(url):
         else:
             raise (ValueError("Publication date not found. Please check the website manually"))
 
-        return paragraphs, pub_date
+        return paragraphs, pub_date, response.text
     else:
         return -1
 
@@ -102,3 +102,11 @@ def convert_leadership(info_list):
 
     return Leadership(l_name, l_gender, l_race, l_birthdate, l_political_status,
                       l_education, l_current_pos, l_prepare_pos)
+
+
+def leadership_process(leadership_list, url, original_json):
+    for leadership in leadership_list:
+        leadership.url = url
+        leadership.original_json = original_json
+
+    return leadership_list

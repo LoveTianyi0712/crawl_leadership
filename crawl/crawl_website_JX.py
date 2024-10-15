@@ -5,7 +5,7 @@
 
 import requests
 import re
-from utils.get_data import get_leadership, retrieve_leadership
+from utils.get_data import get_leadership, retrieve_leadership, leadership_process
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -62,7 +62,7 @@ def crawl_website_JX(period):
             url_pattern = r'http[s]?://[^ ]+'
             url_match = re.search(url_pattern, links[1].text)
             clean_url = url_match.group(0).strip()
-            paragraphs, pub_date = get_leadership(clean_url)
+            paragraphs, pub_date, url_response = get_leadership(clean_url)
 
             if paragraphs == -1:
                 raise (ConnectionError("Failed to get data at", clean_url))
@@ -71,6 +71,7 @@ def crawl_website_JX(period):
             time_diff = current_date - pub_date
             if period > time_diff.days:
                 leaderships = retrieve_leadership(paragraphs)
+                leaderships = leadership_process(leaderships, clean_url, url_response)
                 leadership_list.extend(leaderships)
 
         return leadership_list

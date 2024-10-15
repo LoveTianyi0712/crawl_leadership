@@ -9,7 +9,8 @@ import requests
 from bs4 import BeautifulSoup
 
 from utils.ai_processing import ai_processing_simple
-from utils.get_data import get_content
+from utils.get_data import get_content, leadership_process
+
 
 def crawl_website_GZ(period):
     url = "https://www.ganzhou.gov.cn/zfxxgk/c100280/xxgk_list.shtml"
@@ -33,8 +34,9 @@ def crawl_website_GZ(period):
             current_date = datetime.now().date()
             time_diff = current_date - pub_date
             if period > time_diff.days:
-                paragraphs = get_content(link)
+                paragraphs, url_response = get_content(link)
                 leaderships = ai_processing_simple(paragraphs)
+                leaderships = leadership_process(leaderships, link, url_response)
                 time.sleep(20)
                 leadership_list.extend(leaderships)
 
